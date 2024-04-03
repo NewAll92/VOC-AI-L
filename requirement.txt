@@ -1,0 +1,7 @@
+flask
+SpeechRecognition
+g4f
+elevenlabs
+screen-brightness-control
+appopener
+pyautogui
