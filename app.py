@@ -2,21 +2,25 @@ from flask import Flask, render_template
 import speech_recognition as sr
 import g4f
 from g4f.Provider import You
-from elevenlabs import generate, play, set_api_key
+from elevenlabs import play
+from elevenlabs.client import ElevenLabs
 from screen_brightness_control import set_brightness, get_brightness
 from AppOpener import open
 import sys
 import pyautogui
+import webbrowser  
 
 
-set_api_key("eda8a2c383db6485d14e2dc178626140")
+client = ElevenLabs(
+  api_key="eda8a2c383db6485d14e2dc178626140",
+)
 
 app = Flask(__name__)
 
 engine = None  
 
 def speak(texte):
-    audio = generate(
+    audio = client.generate(
     text= texte,
     voice="Arnold",
     model="eleven_multilingual_v1"
@@ -25,6 +29,14 @@ def speak(texte):
 
 
 r = sr.Recognizer()
+
+
+def ouvrir(prompt):
+    try:
+        open(prompt, throw_error=True, match_closest=True)
+    except:
+        webbrowser.open(f"https://www.{prompt}.com")  
+
 
 def listen():
     with sr.Microphone() as source:
@@ -42,7 +54,7 @@ def listen():
 def generate_response(prompt):
     response = g4f.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        provider=You,
+        provider=g4f.Provider.Liaobots,
         messages=[{"role": "user", "content": prompt}],
     )
     return response
@@ -52,6 +64,9 @@ def generate_response(prompt):
 def index():
     return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 
 @app.route('/run_code', methods=['POST'])
@@ -77,9 +92,9 @@ def run_code():
         print(prompt)
 
     elif 'ouvre ' in prompt or "lance" in prompt or "démarre" in prompt:
-        prompt = prompt.replace("ouvre", "").replace("lance", "").replace("démarre", "")
+        prompt = prompt.replace("ouvre", "").replace("lance", "").replace("démarre", "").replace(' ','')
         speak(f" OK, j'ouvre" + prompt)
-        [open(prompt, match_closest=True)]
+        ouvrir(prompt)
 
     elif 'monte le son' in prompt or "augmente le son" in prompt:
         speak("OK, je monte le son.")
