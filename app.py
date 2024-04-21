@@ -12,7 +12,7 @@ import webbrowser
 
 
 client = ElevenLabs(
-  api_key="eda8a2c383db6485d14e2dc178626140",
+  api_key="YOUR_ELEVENLABS_API_KEY",
 )
 
 app = Flask(__name__)
