@@ -4,5 +4,6 @@ To use it:
 
 Install the requirements file.
 Install app.py and templates, and put them in the same folder.
+Put your ElevenLabs token in the python code.
 Launch app.py and go to http://127.0.0.1:5000/.
 Enjoy!
